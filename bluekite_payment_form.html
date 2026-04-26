@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blue Kite Mentor Services — Payment</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Nunito', sans-serif; background: #0a1628; min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; padding: 2rem 1rem; }
+
+  .wrap { width: 100%; max-width: 560px; }
+
+  /* Header */
+  .page-header { text-align: center; margin-bottom: 1.5rem; }
+  .logo-area { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 6px; }
+  .logo-area svg { width: 40px; height: 40px; }
+  .brand-name { font-size: 26px; font-weight: 700; color: #fff; letter-spacing: -0.5px; }
+  .brand-name span { color: #4db2ff; }
+  .tagline { font-size: 13px; color: #85afd4; letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* Card */
+  .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 80px rgba(0,0,0,0.4); }
+  .card-header { background: linear-gradient(135deg, #0C447C 0%, #185FA5 100%); padding: 1.25rem 2rem; }
+  .card-header-title { font-size: 15px; font-weight: 600; color: #E6F1FB; }
+  .card-header-sub { font-size: 12px; color: #85B7EB; margin-top: 2px; }
+  .body { padding: 1.75rem 2rem; }
+
+  /* Section label */
+  .sec { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #9ab; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* Plan tabs */
+  .tier-tabs { display: flex; border: 1.5px solid #e0e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+  .tier-tab { flex: 1; padding: 10px 6px; background: #f7fafd; border: none; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: #6a85a0; cursor: pointer; border-right: 1.5px solid #e0e8f0; transition: all 0.18s; }
+  .tier-tab:last-child { border-right: none; }
+  .tier-tab.active { background: #0C447C; color: #fff; }
+  .tier-tab .pop { font-size: 9px; background: #4db2ff; color: #fff; border-radius: 4px; padding: 1px 5px; margin-left: 3px; vertical-align: middle; }
+  .tier-desc { font-size: 12px; color: #7a95b0; margin-bottom: 12px; line-height: 1.5; }
+
+  /* Duration */
+  .dur-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 1rem; }
+  .dur-opt { border: 1.5px solid #dde8f4; border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer; transition: all 0.18s; background: #f7fafd; }
+  .dur-opt:hover { border-color: #185FA5; }
+  .dur-opt.selected { border: 2px solid #0C447C; background: #e8f2fc; }
+  .dur-label { font-size: 12px; font-weight: 600; color: #334; }
+  .dur-price { font-size: 18px; font-weight: 700; color: #0C447C; margin-top: 2px; }
+
+  .divider { border: none; border-top: 1px solid #eef2f7; margin: 1.25rem 0; }
+
+  /* Fields */
+  .field { margin-bottom: 14px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #5a7a95; margin-bottom: 5px; }
+  input, select {
+    width: 100%; padding: 10px 14px; border: 1.5px solid #dde8f4; border-radius: 10px;
+    font-family: 'Nunito', sans-serif; font-size: 14px; color: #223; background: #fff;
+    outline: none; transition: border-color 0.18s, box-shadow 0.18s;
+  }
+  input:focus, select:focus { border-color: #185FA5; box-shadow: 0 0 0 3px rgba(24,95,165,0.1); }
+  input.invalid, select.invalid { border-color: #e05; box-shadow: 0 0 0 3px rgba(220,0,80,0.08); }
+  .error-msg { display: none; font-size: 11px; color: #e05; margin-top: 4px; font-weight: 600; }
+
+  /* Mentor code */
+  .code-row { display: flex; gap: 8px; }
+  .code-row input { flex: 1; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .apply-btn { padding: 0 18px; background: #0C447C; color: #fff; border: none; border-radius: 10px; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.18s; }
+  .apply-btn:hover { background: #185FA5; }
+  .code-feedback { font-size: 12px; margin-top: 6px; display: none; font-weight: 600; }
+  .code-feedback.ok { color: #0a7; display: block; }
+  .code-feedback.fail { color: #e05; display: block; }
+
+  /* Payment method */
+  .pay-method { display: flex; gap: 8px; margin-bottom: 14px; }
+  .method-btn { flex: 1; padding: 10px 6px; border: 1.5px solid #dde8f4; border-radius: 10px; background: #f7fafd; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; color: #5a7a95; cursor: pointer; text-align: center; transition: all 0.18s; }
+  .method-btn.active { border: 2px solid #0C447C; color: #0C447C; background: #e8f2fc; }
+  .card-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; }
+
+  /* Summary */
+  .summary-box { background: linear-gradient(135deg, #eaf2fc 0%, #f0f6ff 100%); border-radius: 14px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; border: 1px solid #d4e6f8; }
+  .sum-row { display: flex; justify-content: space-between; font-size: 13px; color: #6a85a0; margin-bottom: 6px; font-weight: 500; }
+  .sum-row.discount { color: #0a7; display: none; }
+  .sum-total { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #0C447C; border-top: 1px solid #c5daf0; padding-top: 10px; margin-top: 4px; }
+
+  .pay-btn { width: 100%; padding: 14px; font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; background: linear-gradient(135deg, #0C447C, #185FA5); color: #fff; border: none; border-radius: 12px; cursor: pointer; transition: opacity 0.18s, transform 0.12s; letter-spacing: 0.02em; }
+  .pay-btn:hover { opacity: 0.9; }
+  .pay-btn:active { transform: scale(0.985); }
+  .secure-note { text-align: center; font-size: 12px; color: #9ab; margin-top: 10px; }
+
+  /* Success */
+  .success-view { display: none; padding: 3rem 2rem; text-align: center; }
+  .success-circle { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #0C447C, #185FA5); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; font-size: 28px; color: #fff; box-shadow: 0 8px 24px rgba(12,68,124,0.3); }
+  .success-title { font-size: 22px; font-weight: 700; color: #0C447C; margin-bottom: 8px; }
+  .success-desc { font-size: 14px; color: #6a85a0; line-height: 1.7; }
+  .plan-badge { display: inline-block; margin-top: 14px; font-size: 13px; background: #e8f2fc; color: #0C447C; border: 1px solid #b5d4f4; border-radius: 8px; padding: 6px 16px; font-weight: 700; }
+  .tx-ref { display: inline-block; margin-top: 10px; font-size: 12px; background: #f0f4f8; padding: 5px 14px; border-radius: 8px; color: #9ab; font-family: monospace; letter-spacing: 0.05em; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="page-header">
+    <div class="logo-area">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4 L36 20 L20 31 L4 20 Z" fill="#4db2ff" stroke="#fff" stroke-width="1.5"/>
+        <path d="M20 31 L18.5 38 M20 31 L21.5 38" stroke="#4db2ff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <p class="brand-name">BLUE <span>KITE</span></p>
+    </div>
+    <p class="tagline">Learn · Grow · Succeed</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <p class="card-header-title">Mentorship Payment</p>
+      <p class="card-header-sub">Choose your plan and complete enrollment below</p>
+    </div>
+
+    <div class="body" id="form-view">
+
+      <p class="sec">Select plan</p>
+      <div class="tier-tabs">
+        <button class="tier-tab active" onclick="selectTier(this,'basic')">⭐ Basic</button>
+        <button class="tier-tab" onclick="selectTier(this,'standard')">📈 Standard <span class="pop">Popular</span></button>
+        <button class="tier-tab" onclick="selectTier(this,'premium')">👑 Premium</button>
+      </div>
+      <p class="tier-desc" id="tier-desc">Perfect for Beginners — Build your foundation with basic guidance.</p>
+      <div class="dur-grid" id="dur-grid"></div>
+
+      <div class="divider"></div>
+      <p class="sec">Your details</p>
+      <div class="field-row">
+        <div class="field">
+          <label>Full name *</label>
+          <input type="text" id="fullname" placeholder="Your full name" />
+          <p class="error-msg" id="err-fullname">Name is required</p>
+        </div>
+        <div class="field">
+          <label>Phone *</label>
+          <input type="tel" id="phone" placeholder="01XXXXXXXXX" maxlength="11" />
+          <p class="error-msg" id="err-phone">Enter a valid number</p>
+        </div>
+      </div>
+      <div class="field">
+        <label>Email *</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+        <p class="error-msg" id="err-email">Enter a valid email</p>
+      </div>
+
+      <div class="divider"></div>
+      <p class="sec">Mentor referral code</p>
+      <div class="field">
+        <label>Have a code? Enter for a discount</label>
+        <div class="code-row">
+          <input type="text" id="mentorcode" placeholder="e.g. MENTOR10" oninput="this.value=this.value.toUpperCase()" />
+          <button class="apply-btn" onclick="applyCode()">Apply</button>
+        </div>
+        <p class="code-feedback" id="code-feedback"></p>
+      </div>
+
+      <div class="divider"></div>
+      <p class="sec">Payment method</p>
+      <div class="pay-method">
+        <button class="method-btn active" onclick="setMethod(this,'Card')">💳 Card</button>
+        <button class="method-btn" onclick="setMethod(this,'bKash')">🟣 bKash</button>
+        <button class="method-btn" onclick="setMethod(this,'Nagad')">🟠 Nagad</button>
+      </div>
+
+      <div id="card-fields">
+        <div class="field">
+          <label>Card number *</label>
+          <input type="text" id="cardnum" placeholder="•••• •••• •••• ••••" maxlength="19" oninput="formatCard(this)" />
+          <p class="error-msg" id="err-cardnum">Enter a valid card number</p>
+        </div>
+        <div class="card-row">
+          <div class="field">
+            <label>Cardholder name *</label>
+            <input type="text" id="cardname" placeholder="As on card" />
+            <p class="error-msg" id="err-cardname">Required</p>
+          </div>
+          <div class="field">
+            <label>Expiry *</label>
+            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)" />
+            <p class="error-msg" id="err-expiry">Invalid</p>
+          </div>
+          <div class="field">
+            <label>CVV *</label>
+            <input type="password" id="cvv" placeholder="•••" maxlength="3" />
+            <p class="error-msg" id="err-cvv">Required</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="mobile-fields" style="display:none;">
+        <div class="field">
+          <label id="mobile-label">bKash number *</label>
+          <input type="tel" id="mobilepay" placeholder="01XXXXXXXXX" maxlength="11" />
+          <p class="error-msg" id="err-mobilepay">Enter a valid number</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="summary-box">
+        <div class="sum-row"><span id="sum-plan-label">Plan</span><span id="sum-price">$2.00</span></div>
+        <div class="sum-row discount" id="discount-row"><span id="disc-label">Mentor discount</span><span id="sum-discount">-$0.00</span></div>
+        <div class="sum-total"><span>Total</span><span id="sum-total">$2.00</span></div>
+      </div>
+
+      <button class="pay-btn" onclick="submitPayment()">🔒 Pay Now</button>
+      <p class="secure-note">Your payment information is encrypted and secure</p>
+    </div>
+
+    <div class="success-view" id="success-view">
+      <div class="success-circle">✓</div>
+      <p class="success-title">Payment Successful!</p>
+      <p class="success-desc">Thank you for joining Blue Kite Mentor Services.<br>A confirmation will be sent to your email.</p>
+      <p class="plan-badge" id="success-plan"></p>
+      <p><span class="tx-ref" id="tx-ref"></span></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const plans = {
+  basic:    { desc: 'Perfect for Beginners — Build your foundation with basic guidance.', durations: [{label:'1 Month',price:2},{label:'3 Months',price:5},{label:'6 Months',price:15}] },
+  standard: { desc: 'For Serious Growth — Advanced strategies and consistent support.', durations: [{label:'3 Months',price:10},{label:'6 Months',price:25},{label:'12 Months',price:60}] },
+  premium:  { desc: 'For Maximum Results — Personalized guidance and priority support.', durations: [{label:'3 Months',price:20},{label:'6 Months',price:40},{label:'12 Months',price:90}] }
+};
+const VALID_CODES = { 'MENTOR10':10, 'BLUEKITE':15, 'GROW20':20 };
+let currentTier='basic', currentDurIdx=0, currentMethod='Card', discountPct=0;
+
+function selectTier(btn,tier){
+  currentTier=tier; currentDurIdx=0;
+  document.querySelectorAll('.tier-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tier-desc').textContent=plans[tier].desc;
+  renderDurations(); updateSummary();
+}
+function renderDurations(){
+  const durs=plans[currentTier].durations;
+  document.getElementById('dur-grid').innerHTML=durs.map((d,i)=>`
+    <div class="dur-opt ${i===0?'selected':''}" onclick="selectDur(this,${i})">
+      <p class="dur-label">${d.label}</p>
+      <p class="dur-price">$${d.price}</p>
+    </div>`).join('');
+}
+function selectDur(el,idx){
+  currentDurIdx=idx;
+  document.querySelectorAll('.dur-opt').forEach(d=>d.classList.remove('selected'));
+  el.classList.add('selected'); updateSummary();
+}
+function updateSummary(){
+  const dur=plans[currentTier].durations[currentDurIdx];
+  const tier=currentTier.charAt(0).toUpperCase()+currentTier.slice(1);
+  document.getElementById('sum-plan-label').textContent=tier+' — '+dur.label;
+  document.getElementById('sum-price').textContent='$'+dur.price.toFixed(2);
+  const discAmt=dur.price*discountPct/100;
+  const total=dur.price-discAmt;
+  document.getElementById('sum-discount').textContent='-$'+discAmt.toFixed(2);
+  document.getElementById('sum-total').textContent='$'+total.toFixed(2);
+  document.getElementById('disc-label').textContent='Mentor discount ('+discountPct+'%)';
+  document.getElementById('discount-row').style.display=discountPct>0?'flex':'none';
+}
+function applyCode(){
+  const code=document.getElementById('mentorcode').value.trim().toUpperCase();
+  const fb=document.getElementById('code-feedback');
+  fb.className='code-feedback';
+  if(!code){fb.textContent='Please enter a code.';fb.classList.add('fail');return;}
+  if(VALID_CODES[code]!==undefined){
+    discountPct=VALID_CODES[code];
+    fb.textContent='✓ Code applied! '+discountPct+'% discount added.';
+    fb.classList.add('ok');
+  } else {
+    discountPct=0;
+    fb.textContent='✗ Invalid code. Please try again.';
+    fb.classList.add('fail');
+  }
+  updateSummary();
+}
+function setMethod(btn,method){
+  currentMethod=method;
+  document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const isMobile=method!=='Card';
+  document.getElementById('card-fields').style.display=isMobile?'none':'block';
+  document.getElementById('mobile-fields').style.display=isMobile?'block':'none';
+  if(isMobile) document.getElementById('mobile-label').textContent=method+' number *';
+  clearErrors();
+}
+function formatCard(el){let v=el.value.replace(/\D/g,'').slice(0,16);el.value=v.replace(/(.{4})/g,'$1 ').trim();}
+function formatExpiry(el){let v=el.value.replace(/\D/g,'');if(v.length>=2)v=v.slice(0,2)+'/'+v.slice(2,4);el.value=v;}
+function showErr(id,show){const el=document.getElementById('err-'+id);if(el)el.style.display=show?'block':'none';}
+function markInvalid(id,bad){const el=document.getElementById(id);if(el)bad?el.classList.add('invalid'):el.classList.remove('invalid');}
+function clearErrors(){['fullname','phone','email','cardnum','cardname','expiry','cvv','mobilepay'].forEach(id=>{showErr(id,false);markInvalid(id,false);});}
+function fail(id){showErr(id,true);markInvalid(id,true);}
+function submitPayment(){
+  clearErrors(); let valid=true;
+  const v=id=>(document.getElementById(id)?.value||'').trim();
+  if(!v('fullname')){fail('fullname');valid=false;}
+  if(!/^01[3-9]\d{8}$/.test(v('phone'))){fail('phone');valid=false;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('email'))){fail('email');valid=false;}
+  if(currentMethod==='Card'){
+    if(v('cardnum').replace(/\s/g,'').length<16){fail('cardnum');valid=false;}
+    if(!v('cardname')){fail('cardname');valid=false;}
+    if(!/^\d{2}\/\d{2}$/.test(v('expiry'))){fail('expiry');valid=false;}
+    if(v('cvv').length<3){fail('cvv');valid=false;}
+  } else {
+    if(!/^01[3-9]\d{8}$/.test(v('mobilepay'))){fail('mobilepay');valid=false;}
+  }
+  if(valid){
+    const dur=plans[currentTier].durations[currentDurIdx];
+    const tier=currentTier.charAt(0).toUpperCase()+currentTier.slice(1);
+    const total=(dur.price-dur.price*discountPct/100).toFixed(2);
+    document.getElementById('success-plan').textContent=tier+' Plan — '+dur.label+' — $'+total;
+    document.getElementById('tx-ref').textContent='Transaction ID: BK-'+Date.now().toString().slice(-8);
+    document.getElementById('form-view').style.display='none';
+    document.getElementById('success-view').style.display='block';
+  }
+}
+renderDurations(); updateSummary();
+</script>
+</body>
+</html>
